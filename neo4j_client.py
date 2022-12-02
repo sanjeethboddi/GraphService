@@ -34,6 +34,7 @@ class Neo4jClient:
             return session.write_transaction(_get_following_count, uid)
     
     def follow_user(self, userRelationship: UserRelationship):
+        print("haha")
         def _follow_user(tx, userRelationship: UserRelationship):
             tx.run(CypherQueryGenerator.get_create_relationship_query(userRelationship))
         with self.driver.session() as session:
@@ -51,7 +52,7 @@ class Neo4jClient:
             return result
         with self.driver.session() as session:
             result =  session.write_transaction(_create_user, userNode)
-            print(result)
+
 
     def delete_user(self, userNode: UserNode):
         def _delete_user(tx, userNode: UserNode):
@@ -73,7 +74,7 @@ class Neo4jClient:
             return [val[0] for val in result.values()]
         with self.driver.session() as session:
             result =  session.write_transaction(_get_following_list, uid)
-            print(result)
+
     
     def get_followers_list(self, uid: str):
         def _get_followers_list(tx, uid: str):

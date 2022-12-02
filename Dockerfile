@@ -20,9 +20,6 @@ RUN apk add --no-cache bash\
                        py3-pip \
     && rm -rf /var/cache/apk/*
 
-RUN which python3
-RUN which pip
-
 RUN pip3 install -r requirements.txt
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
