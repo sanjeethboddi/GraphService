@@ -81,6 +81,16 @@ class Neo4jClient:
             return [val[0] for val in result.values()]
         with self.driver.session() as session:
             return session.write_transaction(_get_followers_list, uid)
+    
+    def check_if_following(self, uid: str, uid2: str):
+        def _check_if_following(tx, uid: str, uid2: str):
+            result = tx.run(CypherQueryGenerator.get_check_if_following_query(uid, uid2))
+            try:
+                return result.values()[0][0]
+            except IndexError:
+                return False
+        with self.driver.session() as session:
+            return session.write_transaction(_check_if_following, uid, uid2)
             
     
     def close(self):
@@ -126,3 +136,9 @@ class CypherQueryGenerator:
     @staticmethod
     def get_followers_list_query(uid: str) -> str:
         return f"""MATCH (a:User{{uid:'{uid}'}})<-[:FOLLOWS]-(b:User) RETURN b.uid"""
+
+    
+    @staticmethod
+    def get_check_if_following_query(uid: str, uid2: str) -> str:
+        return f"""MATCH (a:User{{uid:'{uid}'}}), (b:User{{uid:'{uid2}'}}) RETURN EXISTS ((a)-[:FOLLOWS]->(b))"""
+
